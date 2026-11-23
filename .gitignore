@@ -53,3 +53,15 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+
+# Compilados e pacote de entrega
+vm
+*.o
+*.tar
+
+# Arquivos do professor e saída gerada
+BACKING_STORE.bin
+address.txt
+correct.txt
+correct_ref.txt
