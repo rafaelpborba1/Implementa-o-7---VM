@@ -17,6 +17,16 @@
 
 typedef enum { ALG_FIFO, ALG_LRU } ReplacementAlg;
 
+typedef struct {
+    int frame_number;
+    int valid;
+    unsigned long last_used;
+} PageTableEntry;
+
+static PageTableEntry page_table[NUM_PAGES];
+static signed char physical_memory[NUM_FRAMES][PAGE_SIZE];
+static int frame_to_page[NUM_FRAMES];
+
 static int parse_algorithm(const char *arg, ReplacementAlg *out) {
     if (strcmp(arg, "fifo") == 0) {
         *out = ALG_FIFO;
@@ -35,7 +45,7 @@ static int parse_address_line(const char *line, int *address_out) {
         p++;
     }
     if (*p == '\0') {
-        return 0; /* Linha em branco */
+        return 0;
     }
 
     errno = 0;
@@ -43,18 +53,18 @@ static int parse_address_line(const char *line, int *address_out) {
     long val = strtol(p, &endptr, 10);
 
     if (errno != 0 || endptr == p) {
-        return -1; /* Nao e numero valido */
+        return -1;
     }
 
     while (*endptr != '\0' && isspace((unsigned char)*endptr)) {
         endptr++;
     }
     if (*endptr != '\0') {
-        return -1; /* Caracteres invalidos apos o numero */
+        return -1;
     }
 
     if (val < 0 || val > INT_MAX) {
-        return -1; /* Endereco negativo ou fora do limite */
+        return -1;
     }
 
     *address_out = (int)val;
@@ -80,6 +90,9 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
+    (void)page_alg;
+    (void)tlb_alg;
+
     FILE *addr_file = fopen(argv[1], "r");
     if (addr_file == NULL) {
         fprintf(stderr, "Erro: nao foi possivel abrir o arquivo de enderecos '%s': %s\n",
@@ -104,6 +117,16 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
+    for (int i = 0; i < NUM_PAGES; i++) {
+        page_table[i].valid = 0;
+        page_table[i].frame_number = -1;
+        page_table[i].last_used = 0;
+    }
+
+    for (int i = 0; i < NUM_FRAMES; i++) {
+        frame_to_page[i] = -1;
+    }
+
     char line[256];
     int total_addresses = 0;
 
@@ -124,6 +147,20 @@ int main(int argc, char *argv[]) {
         }
 
         total_addresses++;
+
+        int page_number = (logical_address >> 8) & PAGE_MASK;
+        int offset = logical_address & OFFSET_MASK;
+
+        int frame_number = 0;
+        if (page_table[page_number].valid) {
+            frame_number = page_table[page_number].frame_number;
+        }
+
+        int physical_address = (frame_number * PAGE_SIZE) + offset;
+        signed char value = physical_memory[frame_number][offset];
+
+        fprintf(out_file, "Virtual address: %d TLB: -1 Physical address: %d Value: %d\n",
+                logical_address, physical_address, (int)value);
     }
 
     if (total_addresses == 0) {
