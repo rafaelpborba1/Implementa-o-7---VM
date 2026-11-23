@@ -1,0 +1,22 @@
+Script started on 2026-11-23 11:35:27-03:00 [TERM="xterm-256color" TTY="/dev/pts/2" COLUMNS="139" LINES="23"]
+[?2004h]0;rafaelborba@LAPTOP-1NHA1UCQ: /mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[01;32mrafaelborba@LAPTOP-1NHA1UCQ[00m:[01;34m/mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[00m$ [7mwhoami[27m
+[7mpwd[27m
+[7mdate[27m
+[7mmake clean[27m
+[7mmake[27m
+[7m./vm[27m[A[A[A[A[A]0;rafaelborba@LAPTOP-1NHA1UCQ: /mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[01;32mrafaelborba@LAPTOP-1NHA1UCQ[00m:[01;34m/mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[00m$ whoami
+pwd
+date
+make clean
+make
+./vm
+[?2004lrafaelborba
+/mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb
+Mon Nov 23 11:35:33 -03 2026
+rm -f vm *.o
+make: *** No rule to make target 'vm.c', needed by 'vm'.  Stop.
+bash: ./vm: No such file or directory
+[?2004h]0;rafaelborba@LAPTOP-1NHA1UCQ: /mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[01;32mrafaelborba@LAPTOP-1NHA1UCQ[00m:[01;34m/mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[00m$ exit
+[?2004lexit
+
+Script done on 2026-11-23 11:36:03-03:00 [COMMAND_EXIT_CODE="127"]
