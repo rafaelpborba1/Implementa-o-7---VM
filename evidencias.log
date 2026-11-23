@@ -20,3 +20,31 @@ bash: ./vm: No such file or directory
 [?2004lexit
 
 Script done on 2026-11-23 11:36:03-03:00 [COMMAND_EXIT_CODE="127"]
+Script started on 2026-11-23 16:39:07-03:00 [TERM="xterm-256color" TTY="/dev/pts/7" COLUMNS="139" LINES="23"]
+[?2004h]0;rafaelborba@LAPTOP-1NHA1UCQ: /mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[01;32mrafaelborba@LAPTOP-1NHA1UCQ[00m:[01;34m/mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[00m$ [7mwhoami && pwd && date[27m
+[7mmake clean && make[27m
+[7m./vm[27m
+[7m./vm address.txt fifo abc[27m
+[7m./vm nao_existe.txt lru fifo[27m
+[7m./vm address.txt lru fifo[27m
+[7mecho "Status: $?"[27m
+[7mexit[27m[A[A[A[A[A[A[A]0;rafaelborba@LAPTOP-1NHA1UCQ: /mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[01;32mrafaelborba@LAPTOP-1NHA1UCQ[00m:[01;34m/mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[00m$ whoami && pwd && date
+make clean && make
+./vm
+./vm address.txt fifo abc
+./vm nao_existe.txt lru fifo
+./vm address.txt lru fifo
+echo "Status: $?"
+exit
+[?2004lrafaelborba
+/mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb
+Mon Nov 23 16:39:14 -03 2026
+rm -f vm *.o
+gcc -Wall -Wextra -Werror -O2 -pthread -o vm vm.c
+Uso: ./vm <arquivo_enderecos> <fifo|lru> <fifo|lru>
+Erro: algoritmo de substituicao da TLB invalido 'abc'. Use 'fifo' ou 'lru'.
+Erro: nao foi possivel abrir o arquivo de enderecos 'nao_existe.txt': No such file or directory
+Status: 0
+exit
+
+Script done on 2026-11-23 16:39:16-03:00 [COMMAND_EXIT_CODE="0"]
