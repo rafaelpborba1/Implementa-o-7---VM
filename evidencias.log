@@ -80,3 +80,35 @@ Virtual address: 40185 TLB: -1 Physical address: 249 Value: 0
 exit
 
 Script done on 2026-11-23 18:24:17-03:00 [COMMAND_EXIT_CODE="0"]
+Script started on 2026-11-24 09:10:17-03:00 [TERM="xterm-256color" TTY="/dev/pts/7" COLUMNS="137" LINES="23"]
+[?2004h]0;rafaelborba@LAPTOP-1NHA1UCQ: /mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[01;32mrafaelborba@LAPTOP-1NHA1UCQ[00m:[01;34m/mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[00m$ [7mwhoami && pwd && date[27m
+[7mmake clean && make[27m
+[7m./vm address.txt fifo fifo[27m
+[7mhead -n 5 correct.txt[27m
+[7m./vm address.txt lru fifo[27m
+[7mhead -n 5 correct.txt[27m
+[7mexit[27m[A[A[A[A[A[A]0;rafaelborba@LAPTOP-1NHA1UCQ: /mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[01;32mrafaelborba@LAPTOP-1NHA1UCQ[00m:[01;34m/mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[00m$ whoami && pwd && date
+make clean && make
+./vm address.txt fifo fifo
+head -n 5 correct.txt
+./vm address.txt lru fifo
+head -n 5 correct.txt
+exit
+[?2004lrafaelborba
+/mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb
+Tue Nov 24 09:10:23 -03 2026
+rm -f vm *.o
+gcc -Wall -Wextra -Werror -O2 -pthread -o vm vm.c
+Virtual address: 16916 TLB: -1 Physical address: 20 Value: 0
+Virtual address: 62493 TLB: -1 Physical address: 285 Value: 0
+Virtual address: 30198 TLB: -1 Physical address: 758 Value: 29
+Virtual address: 53683 TLB: -1 Physical address: 947 Value: 108
+Virtual address: 40185 TLB: -1 Physical address: 1273 Value: 0
+Virtual address: 16916 TLB: -1 Physical address: 20 Value: 0
+Virtual address: 62493 TLB: -1 Physical address: 285 Value: 0
+Virtual address: 30198 TLB: -1 Physical address: 758 Value: 29
+Virtual address: 53683 TLB: -1 Physical address: 947 Value: 108
+Virtual address: 40185 TLB: -1 Physical address: 1273 Value: 0
+exit
+
+Script done on 2026-11-24 09:10:30-03:00 [COMMAND_EXIT_CODE="0"]
