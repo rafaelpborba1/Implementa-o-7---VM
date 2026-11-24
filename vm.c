@@ -124,16 +124,17 @@ static void invalidate_tlb_page(int page_number) {
             tlb[i].page_number = -1;
             tlb[i].frame_number = -1;
             tlb[i].last_used = 0;
+            tlb_count--;
         }
     }
 }
 
-static void insert_tlb(int page_number, int frame_number, ReplacementAlg tlb_alg) {
+static int insert_tlb(int page_number, int frame_number, ReplacementAlg tlb_alg) {
     for (int i = 0; i < TLB_SIZE; i++) {
         if (tlb[i].valid && tlb[i].page_number == page_number) {
             tlb[i].frame_number = frame_number;
             tlb[i].last_used = access_clock;
-            return;
+            return i;
         }
     }
 
@@ -148,23 +149,15 @@ static void insert_tlb(int page_number, int frame_number, ReplacementAlg tlb_alg
         }
         tlb_count++;
     } else {
-        for (int i = 0; i < TLB_SIZE; i++) {
-            if (!tlb[i].valid) {
-                target_idx = i;
-                break;
-            }
-        }
-        if (target_idx == -1) {
-            if (tlb_alg == ALG_FIFO) {
-                target_idx = tlb_fifo_index;
-                tlb_fifo_index = (tlb_fifo_index + 1) % TLB_SIZE;
-            } else {
-                unsigned long oldest_time = ULONG_MAX;
-                for (int i = 0; i < TLB_SIZE; i++) {
-                    if (tlb[i].last_used < oldest_time) {
-                        oldest_time = tlb[i].last_used;
-                        target_idx = i;
-                    }
+        if (tlb_alg == ALG_FIFO) {
+            target_idx = tlb_fifo_index;
+            tlb_fifo_index = (tlb_fifo_index + 1) % TLB_SIZE;
+        } else {
+            unsigned long oldest_time = ULONG_MAX;
+            for (int i = 0; i < TLB_SIZE; i++) {
+                if (tlb[i].last_used < oldest_time) {
+                    oldest_time = tlb[i].last_used;
+                    target_idx = i;
                 }
             }
         }
@@ -174,6 +167,8 @@ static void insert_tlb(int page_number, int frame_number, ReplacementAlg tlb_alg
     tlb[target_idx].frame_number = frame_number;
     tlb[target_idx].valid = 1;
     tlb[target_idx].last_used = access_clock;
+
+    return target_idx;
 }
 
 static int select_victim_frame(ReplacementAlg page_alg) {
@@ -265,7 +260,7 @@ static int process_addresses(const char *addr_filename, FILE *addr_file, FILE *b
                 }
             }
             frame_number = page_table[page_number].frame_number;
-            insert_tlb(page_number, frame_number, tlb_alg);
+            tlb_index = insert_tlb(page_number, frame_number, tlb_alg);
         }
 
         page_table[page_number].last_used = access_clock;
