@@ -146,3 +146,64 @@ Virtual address: 12107 TLB: -1 Physical address: 6475 Value: -46
 exit
 
 Script done on 2026-11-24 09:32:02-03:00 [COMMAND_EXIT_CODE="0"]
+Script started on 2026-11-24 09:50:00-03:00 [TERM="xterm-256color" TTY="/dev/pts/9" COLUMNS="130" LINES="23"]
+[?2004h]0;rafaelborba@LAPTOP-1NHA1UCQ: /mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[01;32mrafaelborba@LAPTOP-1NHA1UCQ[00m:[01;34m/mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[00m$ [7mmake[27m
+[7m./vm address.txt lru lru[27m
+[7mtail -n 6 correct.txt[27m
+[7mexit[27m[A[A[A]0;rafaelborba@LAPTOP-1NHA1UCQ: /mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[01;32mrafaelborba@LAPTOP-1NHA1UCQ[00m:[01;34m/mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[00m$ make
+./vm address.txt lru lru
+tail -n 6 correct.txt
+exit
+[?2004lgcc -Wall -Wextra -Werror -O2 -pthread -o vm vm.c
+[01m[Kvm.c:[m[K In function ‘[01m[Kmain[m[K’:
+[01m[Kvm.c:276:5:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K,[m[K’ or ‘[01m[K;[m[K’ before ‘[01m[Kwhile[m[K’
+  276 |     [01;31m[Kwhile[m[K (fgets(line, sizeof(line), addr_file) != NULL) {
+      |     [01;31m[K^~~~~[m[K
+[01m[Kvm.c:274:9:[m[K [01;31m[Kerror: [m[Kunused variable ‘[01m[Kvariavel_nao_usada[m[K’ [[01;31m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wunused-variable-Werror=unused-variable]8;;[m[K]
+  274 |     int [01;31m[Kvariavel_nao_usada[m[K = 42
+      |         [01;31m[K^~~~~~~~~~~~~~~~~~[m[K
+[01m[Kvm.c:272:10:[m[K [01;31m[Kerror: [m[Kunused variable ‘[01m[Kline[m[K’ [[01;31m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wunused-variable-Werror=unused-variable]8;;[m[K]
+  272 |     char [01;31m[Kline[m[K[256];
+      |          [01;31m[K^~~~[m[K
+[01m[Kvm.c:[m[K At top level:
+[01m[Kvm.c:183:12:[m[K [01;31m[Kerror: [m[K‘[01m[Khandle_page_fault[m[K’ defined but not used [[01;31m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wunused-function-Werror=unused-function]8;;[m[K]
+  183 | static int [01;31m[Khandle_page_fault[m[K(int page_number, FILE *backing_store, ReplacementAlg page_alg) {
+      |            [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[Kvm.c:112:13:[m[K [01;31m[Kerror: [m[K‘[01m[Kinsert_tlb[m[K’ defined but not used [[01;31m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wunused-function-Werror=unused-function]8;;[m[K]
+  112 | static void [01;31m[Kinsert_tlb[m[K(int page_number, int frame_number, ReplacementAlg tlb_alg) {
+      |             [01;31m[K^~~~~~~~~~[m[K
+[01m[Kvm.c:90:12:[m[K [01;31m[Kerror: [m[K‘[01m[Ksearch_tlb[m[K’ defined but not used [[01;31m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wunused-function-Werror=unused-function]8;;[m[K]
+   90 | static int [01;31m[Ksearch_tlb[m[K(int page_number, int *frame_out) {
+      |            [01;31m[K^~~~~~~~~~[m[K
+[01m[Kvm.c:58:12:[m[K [01;31m[Kerror: [m[K‘[01m[Kparse_address_line[m[K’ defined but not used [[01;31m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wunused-function-Werror=unused-function]8;;[m[K]
+   58 | static int [01;31m[Kparse_address_line[m[K(const char *line, int *address_out) {
+      |            [01;31m[K^~~~~~~~~~~~~~~~~~[m[K
+cc1: all warnings being treated as errors
+make: *** [Makefile:9: vm] Error 1
+Virtual address: 31260 TLB: -1 Physical address: 21532 Value: 0
+Virtual address: 17071 TLB: -1 Physical address: 9647 Value: -85
+Virtual address: 8940 TLB: -1 Physical address: 26348 Value: 0
+Virtual address: 9929 TLB: -1 Physical address: 969 Value: 0
+Virtual address: 45563 TLB: -1 Physical address: 507 Value: 126
+Virtual address: 12107 TLB: -1 Physical address: 17739 Value: -46
+exit
+
+Script done on 2026-11-24 09:50:09-03:00 [COMMAND_EXIT_CODE="0"]
+Script started on 2026-11-24 09:56:34-03:00 [TERM="xterm-256color" TTY="/dev/pts/5" COLUMNS="137" LINES="23"]
+[?2004h]0;rafaelborba@LAPTOP-1NHA1UCQ: /mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[01;32mrafaelborba@LAPTOP-1NHA1UCQ[00m:[01;34m/mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[00m$ [7mmake[27m
+[7m./vm address.txt lru lru[27m
+[7mtail -n 6 correct.txt[27m
+[7mexit[27m[A[A[A]0;rafaelborba@LAPTOP-1NHA1UCQ: /mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[01;32mrafaelborba@LAPTOP-1NHA1UCQ[00m:[01;34m/mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[00m$ make
+./vm address.txt lru lru
+tail -n 6 correct.txt
+exit
+[?2004lgcc -Wall -Wextra -Werror -O2 -pthread -o vm vm.c
+Virtual address: 12107 TLB: -1 Physical address: 17739 Value: -46
+Number of Translated Addresses = 1000
+Page Faults = 539
+Page Fault Rate = 0.539
+TLB Hits = 55
+TLB Hit Rate = 0.055
+exit
+
+Script done on 2026-11-24 09:56:50-03:00 [COMMAND_EXIT_CODE="0"]

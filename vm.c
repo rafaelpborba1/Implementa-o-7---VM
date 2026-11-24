@@ -331,6 +331,15 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
+    double page_fault_rate = (double)page_faults / (double)total_addresses;
+    double tlb_hit_rate = (double)tlb_hits / (double)total_addresses;
+
+    fprintf(out_file, "Number of Translated Addresses = %d\n", total_addresses);
+    fprintf(out_file, "Page Faults = %d\n", page_faults);
+    fprintf(out_file, "Page Fault Rate = %.3f\n", page_fault_rate);
+    fprintf(out_file, "TLB Hits = %d\n", tlb_hits);
+    fprintf(out_file, "TLB Hit Rate = %.3f\n", tlb_hit_rate);
+
     fclose(out_file);
     fclose(backing_store);
     fclose(addr_file);
