@@ -19,9 +19,9 @@ Para compilar o programa com o Makefile:
 make
 
 ## Como Executar
-```bash
+
 ./vm address.txt fifo fifo
 ./vm address.txt fifo lru
 ./vm address.txt lru fifo
 ./vm address.txt lru lru
-```bash
+
