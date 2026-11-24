@@ -112,3 +112,37 @@ Virtual address: 40185 TLB: -1 Physical address: 1273 Value: 0
 exit
 
 Script done on 2026-11-24 09:10:30-03:00 [COMMAND_EXIT_CODE="0"]
+Script started on 2026-11-24 09:31:49-03:00 [TERM="xterm-256color" TTY="/dev/pts/5" COLUMNS="137" LINES="23"]
+[?2004h]0;rafaelborba@LAPTOP-1NHA1UCQ: /mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[01;32mrafaelborba@LAPTOP-1NHA1UCQ[00m:[01;34m/mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[00m$ [7mwhoami && pwd && date[27m
+[7mmake clean && make[27m
+[7m./vm address.txt lru lru[27m
+[7mtail -n 6 correct.txt[27m
+[7m./vm address.txt fifo fifo[27m
+[7mtail -n 6 correct.txt[27m
+[7mexit[27m[A[A[A[A[A[A]0;rafaelborba@LAPTOP-1NHA1UCQ: /mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[01;32mrafaelborba@LAPTOP-1NHA1UCQ[00m:[01;34m/mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[00m$ whoami && pwd && date
+make clean && make
+./vm address.txt lru lru
+tail -n 6 correct.txt
+./vm address.txt fifo fifo
+tail -n 6 correct.txt
+exit
+[?2004lrafaelborba
+/mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb
+Tue Nov 24 09:31:54 -03 2026
+rm -f vm *.o
+gcc -Wall -Wextra -Werror -O2 -pthread -o vm vm.c
+Virtual address: 31260 TLB: -1 Physical address: 21532 Value: 0
+Virtual address: 17071 TLB: -1 Physical address: 9647 Value: -85
+Virtual address: 8940 TLB: -1 Physical address: 26348 Value: 0
+Virtual address: 9929 TLB: -1 Physical address: 969 Value: 0
+Virtual address: 45563 TLB: -1 Physical address: 507 Value: 126
+Virtual address: 12107 TLB: -1 Physical address: 17739 Value: -46
+Virtual address: 31260 TLB: -1 Physical address: 5148 Value: 0
+Virtual address: 17071 TLB: -1 Physical address: 5551 Value: -85
+Virtual address: 8940 TLB: -1 Physical address: 5868 Value: 0
+Virtual address: 9929 TLB: -1 Physical address: 6089 Value: 0
+Virtual address: 45563 TLB: -1 Physical address: 6395 Value: 126
+Virtual address: 12107 TLB: -1 Physical address: 6475 Value: -46
+exit
+
+Script done on 2026-11-24 09:32:02-03:00 [COMMAND_EXIT_CODE="0"]

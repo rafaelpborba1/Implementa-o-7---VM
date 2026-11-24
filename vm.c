@@ -23,14 +23,25 @@ typedef struct {
     unsigned long last_used;
 } PageTableEntry;
 
+typedef struct {
+    int page_number;
+    int frame_number;
+    int valid;
+    unsigned long last_used;
+} TLBEntry;
+
 static PageTableEntry page_table[NUM_PAGES];
+static TLBEntry tlb[TLB_SIZE];
 static signed char physical_memory[NUM_FRAMES][PAGE_SIZE];
 static int frame_to_page[NUM_FRAMES];
 
 static int next_free_frame = 0;
 static int fifo_victim_frame = 0;
+static int tlb_count = 0;
+static int tlb_fifo_index = 0;
 static unsigned long access_clock = 0;
 static int page_faults = 0;
+static int tlb_hits = 0;
 
 static int parse_algorithm(const char *arg, ReplacementAlg *out) {
     if (strcmp(arg, "fifo") == 0) {
@@ -76,6 +87,76 @@ static int parse_address_line(const char *line, int *address_out) {
     return 1;
 }
 
+static int search_tlb(int page_number, int *frame_out) {
+    for (int i = 0; i < TLB_SIZE; i++) {
+        if (tlb[i].valid && tlb[i].page_number == page_number) {
+            tlb[i].last_used = access_clock;
+            *frame_out = tlb[i].frame_number;
+            return i;
+        }
+    }
+    return -1;
+}
+
+static void invalidate_tlb_page(int page_number) {
+    for (int i = 0; i < TLB_SIZE; i++) {
+        if (tlb[i].valid && tlb[i].page_number == page_number) {
+            tlb[i].valid = 0;
+            tlb[i].page_number = -1;
+            tlb[i].frame_number = -1;
+            tlb[i].last_used = 0;
+        }
+    }
+}
+
+static void insert_tlb(int page_number, int frame_number, ReplacementAlg tlb_alg) {
+    for (int i = 0; i < TLB_SIZE; i++) {
+        if (tlb[i].valid && tlb[i].page_number == page_number) {
+            tlb[i].frame_number = frame_number;
+            tlb[i].last_used = access_clock;
+            return;
+        }
+    }
+
+    int target_idx = -1;
+
+    if (tlb_count < TLB_SIZE) {
+        for (int i = 0; i < TLB_SIZE; i++) {
+            if (!tlb[i].valid) {
+                target_idx = i;
+                break;
+            }
+        }
+        tlb_count++;
+    } else {
+        for (int i = 0; i < TLB_SIZE; i++) {
+            if (!tlb[i].valid) {
+                target_idx = i;
+                break;
+            }
+        }
+        if (target_idx == -1) {
+            if (tlb_alg == ALG_FIFO) {
+                target_idx = tlb_fifo_index;
+                tlb_fifo_index = (tlb_fifo_index + 1) % TLB_SIZE;
+            } else {
+                unsigned long oldest_time = ULONG_MAX;
+                for (int i = 0; i < TLB_SIZE; i++) {
+                    if (tlb[i].last_used < oldest_time) {
+                        oldest_time = tlb[i].last_used;
+                        target_idx = i;
+                    }
+                }
+            }
+        }
+    }
+
+    tlb[target_idx].page_number = page_number;
+    tlb[target_idx].frame_number = frame_number;
+    tlb[target_idx].valid = 1;
+    tlb[target_idx].last_used = access_clock;
+}
+
 static int select_victim_frame(ReplacementAlg page_alg) {
     if (next_free_frame < NUM_FRAMES) {
         return next_free_frame++;
@@ -108,6 +189,7 @@ static int handle_page_fault(int page_number, FILE *backing_store, ReplacementAl
     if (evicted_page != -1) {
         page_table[evicted_page].valid = 0;
         page_table[evicted_page].frame_number = -1;
+        invalidate_tlb_page(evicted_page);
     }
 
     long disk_offset = (long)page_number * PAGE_SIZE;
@@ -146,8 +228,6 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    (void)tlb_alg;
-
     FILE *addr_file = fopen(argv[1], "r");
     if (addr_file == NULL) {
         fprintf(stderr, "Erro: nao foi possivel abrir o arquivo de enderecos '%s': %s\n",
@@ -182,6 +262,13 @@ int main(int argc, char *argv[]) {
         frame_to_page[i] = -1;
     }
 
+    for (int i = 0; i < TLB_SIZE; i++) {
+        tlb[i].valid = 0;
+        tlb[i].page_number = -1;
+        tlb[i].frame_number = -1;
+        tlb[i].last_used = 0;
+    }
+
     char line[256];
     int total_addresses = 0;
 
@@ -207,24 +294,32 @@ int main(int argc, char *argv[]) {
         int page_number = (logical_address >> 8) & PAGE_MASK;
         int offset = logical_address & OFFSET_MASK;
 
-        if (!page_table[page_number].valid) {
-            if (!handle_page_fault(page_number, backing_store, page_alg)) {
-                fprintf(stderr, "Erro: falha ao ler pagina %d de '%s'.\n", page_number, BACKING_STORE_FILE);
-                fclose(out_file);
-                fclose(backing_store);
-                fclose(addr_file);
-                remove(OUTPUT_FILE);
-                return EXIT_FAILURE;
+        int frame_number = -1;
+        int tlb_index = search_tlb(page_number, &frame_number);
+
+        if (tlb_index != -1) {
+            tlb_hits++;
+        } else {
+            if (!page_table[page_number].valid) {
+                if (!handle_page_fault(page_number, backing_store, page_alg)) {
+                    fprintf(stderr, "Erro: falha ao ler pagina %d de '%s'.\n", page_number, BACKING_STORE_FILE);
+                    fclose(out_file);
+                    fclose(backing_store);
+                    fclose(addr_file);
+                    remove(OUTPUT_FILE);
+                    return EXIT_FAILURE;
+                }
             }
+            frame_number = page_table[page_number].frame_number;
+            insert_tlb(page_number, frame_number, tlb_alg);
         }
 
         page_table[page_number].last_used = access_clock;
-        int frame_number = page_table[page_number].frame_number;
         int physical_address = (frame_number * PAGE_SIZE) + offset;
         signed char value = physical_memory[frame_number][offset];
 
-        fprintf(out_file, "Virtual address: %d TLB: -1 Physical address: %d Value: %d\n",
-                logical_address, physical_address, (int)value);
+        fprintf(out_file, "Virtual address: %d TLB: %d Physical address: %d Value: %d\n",
+                logical_address, tlb_index, physical_address, (int)value);
     }
 
     if (total_addresses == 0) {
