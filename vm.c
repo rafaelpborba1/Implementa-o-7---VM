@@ -87,6 +87,25 @@ static int parse_address_line(const char *line, int *address_out) {
     return 1;
 }
 
+static void init_structures(void) {
+    for (int i = 0; i < NUM_PAGES; i++) {
+        page_table[i].valid = 0;
+        page_table[i].frame_number = -1;
+        page_table[i].last_used = 0;
+    }
+
+    for (int i = 0; i < NUM_FRAMES; i++) {
+        frame_to_page[i] = -1;
+    }
+
+    for (int i = 0; i < TLB_SIZE; i++) {
+        tlb[i].valid = 0;
+        tlb[i].page_number = -1;
+        tlb[i].frame_number = -1;
+        tlb[i].last_used = 0;
+    }
+}
+
 static int search_tlb(int page_number, int *frame_out) {
     for (int i = 0; i < TLB_SIZE; i++) {
         if (tlb[i].valid && tlb[i].page_number == page_number) {
@@ -209,6 +228,63 @@ static int handle_page_fault(int page_number, FILE *backing_store, ReplacementAl
     return 1;
 }
 
+static int process_addresses(const char *addr_filename, FILE *addr_file, FILE *backing_store,
+                             FILE *out_file, ReplacementAlg page_alg, ReplacementAlg tlb_alg,
+                             int *total_out) {
+    char line[256];
+    int total_addresses = 0;
+
+    while (fgets(line, sizeof(line), addr_file) != NULL) {
+        int logical_address = 0;
+        int parse_status = parse_address_line(line, &logical_address);
+
+        if (parse_status == 0) {
+            continue;
+        }
+        if (parse_status < 0) {
+            fprintf(stderr, "Erro: formatacao invalida no arquivo '%s': %s", addr_filename, line);
+            return 0;
+        }
+
+        total_addresses++;
+        access_clock++;
+
+        int page_number = (logical_address >> 8) & PAGE_MASK;
+        int offset = logical_address & OFFSET_MASK;
+
+        int frame_number = -1;
+        int tlb_index = search_tlb(page_number, &frame_number);
+
+        if (tlb_index != -1) {
+            tlb_hits++;
+        } else {
+            if (!page_table[page_number].valid) {
+                if (!handle_page_fault(page_number, backing_store, page_alg)) {
+                    fprintf(stderr, "Erro: falha ao ler pagina %d de '%s'.\n", page_number, BACKING_STORE_FILE);
+                    return 0;
+                }
+            }
+            frame_number = page_table[page_number].frame_number;
+            insert_tlb(page_number, frame_number, tlb_alg);
+        }
+
+        page_table[page_number].last_used = access_clock;
+        int physical_address = (frame_number * PAGE_SIZE) + offset;
+        signed char value = physical_memory[frame_number][offset];
+
+        fprintf(out_file, "Virtual address: %d TLB: %d Physical address: %d Value: %d\n",
+                logical_address, tlb_index, physical_address, (int)value);
+    }
+
+    if (total_addresses == 0) {
+        fprintf(stderr, "Erro: o arquivo '%s' nao contem enderecos validos.\n", addr_filename);
+        return 0;
+    }
+
+    *total_out = total_addresses;
+    return 1;
+}
+
 static void write_statistics(FILE *out_file, int total_addresses) {
     double page_fault_rate = (double)page_faults / (double)total_addresses;
     double tlb_hit_rate = (double)tlb_hits / (double)total_addresses;
@@ -263,78 +339,10 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    for (int i = 0; i < NUM_PAGES; i++) {
-        page_table[i].valid = 0;
-        page_table[i].frame_number = -1;
-        page_table[i].last_used = 0;
-    }
+    init_structures();
 
-    for (int i = 0; i < NUM_FRAMES; i++) {
-        frame_to_page[i] = -1;
-    }
-
-    for (int i = 0; i < TLB_SIZE; i++) {
-        tlb[i].valid = 0;
-        tlb[i].page_number = -1;
-        tlb[i].frame_number = -1;
-        tlb[i].last_used = 0;
-    }
-
-    char line[256];
     int total_addresses = 0;
-
-    while (fgets(line, sizeof(line), addr_file) != NULL) {
-        int logical_address = 0;
-        int parse_status = parse_address_line(line, &logical_address);
-
-        if (parse_status == 0) {
-            continue;
-        }
-        if (parse_status < 0) {
-            fprintf(stderr, "Erro: formatacao invalida no arquivo '%s': %s", argv[1], line);
-            fclose(out_file);
-            fclose(backing_store);
-            fclose(addr_file);
-            remove(OUTPUT_FILE);
-            return EXIT_FAILURE;
-        }
-
-        total_addresses++;
-        access_clock++;
-
-        int page_number = (logical_address >> 8) & PAGE_MASK;
-        int offset = logical_address & OFFSET_MASK;
-
-        int frame_number = -1;
-        int tlb_index = search_tlb(page_number, &frame_number);
-
-        if (tlb_index != -1) {
-            tlb_hits++;
-        } else {
-            if (!page_table[page_number].valid) {
-                if (!handle_page_fault(page_number, backing_store, page_alg)) {
-                    fprintf(stderr, "Erro: falha ao ler pagina %d de '%s'.\n", page_number, BACKING_STORE_FILE);
-                    fclose(out_file);
-                    fclose(backing_store);
-                    fclose(addr_file);
-                    remove(OUTPUT_FILE);
-                    return EXIT_FAILURE;
-                }
-            }
-            frame_number = page_table[page_number].frame_number;
-            insert_tlb(page_number, frame_number, tlb_alg);
-        }
-
-        page_table[page_number].last_used = access_clock;
-        int physical_address = (frame_number * PAGE_SIZE) + offset;
-        signed char value = physical_memory[frame_number][offset];
-
-        fprintf(out_file, "Virtual address: %d TLB: %d Physical address: %d Value: %d\n",
-                logical_address, tlb_index, physical_address, (int)value);
-    }
-
-    if (total_addresses == 0) {
-        fprintf(stderr, "Erro: o arquivo '%s' nao contem enderecos validos.\n", argv[1]);
+    if (!process_addresses(argv[1], addr_file, backing_store, out_file, page_alg, tlb_alg, &total_addresses)) {
         fclose(out_file);
         fclose(backing_store);
         fclose(addr_file);
