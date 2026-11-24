@@ -378,3 +378,150 @@ TLB Hit Rate = 0.055
 exit
 
 Script done on 2026-11-24 11:48:46-03:00 [COMMAND_EXIT_CODE="0"]
+Script started on 2026-11-24 12:03:19-03:00 [TERM="xterm-256color" TTY="/dev/pts/2" COLUMNS="137" LINES="23"]
+[?2004h]0;rafaelborba@LAPTOP-1NHA1UCQ: /mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[01;32mrafaelborba@LAPTOP-1NHA1UCQ[00m:[01;34m/mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[00m$ [7mmake clean && make[27m
+
+[7mecho "=== 1. TESTES DE ROBUSTEZ (ENTRADAS INVALIDAS) ==="[27m
+[7m./vm[27m
+[7m./vm arquivo_inexistente.txt lru lru[27m
+[7m./vm address.txt fifo invalido[27m
+[7m./vm address.txt invalido lru[27m
+
+[7mecho "=== 2. COMBINACAO 1/4: PAGE=FIFO | TLB=FIFO ==="[27m
+[7m./vm address.txt fifo fifo[27m
+[7mtail -n 5 correct.txt[27m
+
+[7mecho "=== 3. COMBINACAO 2/4: PAGE=FIFO | TLB=LRU ==="[27m
+[7m./vm address.txt fifo lru[27m
+[7mtail -n 5 correct.txt[27m
+
+[7mecho "=== 4. COMBINACAO 3/4: PAGE=LRU | TLB=FIFO ==="[27m
+[7m./vm address.txt lru fifo[27m
+[7mtail -n 5 correct.txt[27m
+
+[7mecho "=== 5. COMBINACAO 4/4: PAGE=LRU | TLB=LRU ==="[27m
+[7mexitlog --onelineFICACAO DE ARQUIVOS E HISTORICO GIT ==="[27m[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A[A]0;rafaelborba@LAPTOP-1NHA1UCQ: /mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[01;32mrafaelborba@LAPTOP-1NHA1UCQ[00m:[01;34m/mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[00m$ make clean && make
+
+echo "=== 1. TESTES DE ROBUSTEZ (ENTRADAS INVALIDAS) ==="
+./vm
+./vm arquivo_inexistente.txt lru lru
+./vm address.txt fifo invalido
+./vm address.txt invalido lru
+
+echo "=== 2. COMBINACAO 1/4: PAGE=FIFO | TLB=FIFO ==="
+./vm address.txt fifo fifo
+tail -n 5 correct.txt
+
+echo "=== 3. COMBINACAO 2/4: PAGE=FIFO | TLB=LRU ==="
+./vm address.txt fifo lru
+tail -n 5 correct.txt
+
+echo "=== 4. COMBINACAO 3/4: PAGE=LRU | TLB=FIFO ==="
+./vm address.txt lru fifo
+tail -n 5 correct.txt
+
+echo "=== 5. COMBINACAO 4/4: PAGE=LRU | TLB=LRU ==="
+exitlog --onelineFICACAO DE ARQUIVOS E HISTORICO GIT ==="
+[?2004lrm -f vm *.o
+gcc -Wall -Wextra -Werror -O2 -pthread -o vm vm.c
+=== 1. TESTES DE ROBUSTEZ (ENTRADAS INVALIDAS) ===
+Uso: ./vm <arquivo_enderecos> <fifo|lru> <fifo|lru>
+Erro: nao foi possivel abrir o arquivo de enderecos 'arquivo_inexistente.txt': No such file or directory
+Erro: algoritmo de substituicao da TLB invalido 'invalido'. Use 'fifo' ou 'lru'.
+Erro: algoritmo de substituicao de pagina invalido 'invalido'. Use 'fifo' ou 'lru'.
+=== 2. COMBINACAO 1/4: PAGE=FIFO | TLB=FIFO ===
+Number of Translated Addresses = 1000
+Page Faults = 538
+Page Fault Rate = 0.538
+TLB Hits = 54
+TLB Hit Rate = 0.054
+=== 3. COMBINACAO 2/4: PAGE=FIFO | TLB=LRU ===
+Number of Translated Addresses = 1000
+Page Faults = 538
+Page Fault Rate = 0.538
+TLB Hits = 55
+TLB Hit Rate = 0.055
+=== 4. COMBINACAO 3/4: PAGE=LRU | TLB=FIFO ===
+Number of Translated Addresses = 1000
+Page Faults = 539
+Page Fault Rate = 0.539
+TLB Hits = 54
+TLB Hit Rate = 0.054
+=== 5. COMBINACAO 4/4: PAGE=LRU | TLB=LRU ===
+[?2004h> 
+[?2004l[?2004h> 
+[?2004l[?2004h> 
+[?2004l[?2004h> 
+[?2004l[?2004h> exit
+[?2004l[?2004h> ^C[?2004l[?2004h[?2004l
+[?2004h]0;rafaelborba@LAPTOP-1NHA1UCQ: /mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[01;32mrafaelborba@LAPTOP-1NHA1UCQ[00m:[01;34m/mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[00m$ [7mscript -a evidencias.log -c "[27m
+[7mwhoami && pwd && date[27m
+[7mmake clean && make[27m
+[7m./vm[27m
+[7m./vm arquivo_inexistente.txt lru lru[27m
+[7m./vm address.txt fifo invalido[27m
+[7m./vm address.txt invalido lru[27m
+[7m./vm address.txt fifo fifo && tail -n 5 correct.txt[27m
+[7m./vm address.txt fifo lru && tail -n 5 correct.txt[27m
+[7m./vm address.txt lru fifo && tail -n 5 correct.txt[27m
+[7m./vm address.txt lru lru && head -n 5 correct.txt && tail -n 5 correct.txt[27m
+[7mwc -l correct.txt[27m
+[7mgit status[27m
+[7mgit log --oneline[27m
+[7m"[27m[A[A[A[A[A[A[A[A[A[A[A[A[A[A]0;rafaelborba@LAPTOP-1NHA1UCQ: /mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb[01;32mrafaelScript started on 2026-11-24 12:06:14-03:00 [COMMAND=" whoami && pwd && date make clean && make ./vm ./vm arquivo_inexistente.txt lru lru ./vm address.txt fifo invalido ./vm address.txt invalido lru ./vm address.txt fifo fifo && tail -n 5 correct.txt ./vm address.txt fifo lru && tail -n 5 correct.txt ./vm address.txt lru fifo && tail -n 5 correct.txt ./vm address.txt lru lru && head -n 5 correct.txt && tail -n 5 correct.txt wc -l correct.txt git status git log --oneline " TERM="xterm-256color" TTY="/dev/pts/9" COLUMNS="137" LINES="23"]
+rafaelborba
+/mnt/c/Users/rafap/OneDrive/Área de Trabalho/rpb
+Tue Nov 24 12:06:14 -03 2026
+rm -f vm *.o
+gcc -Wall -Wextra -Werror -O2 -pthread -o vm vm.c
+Uso: ./vm <arquivo_enderecos> <fifo|lru> <fifo|lru>
+Erro: nao foi possivel abrir o arquivo de enderecos 'arquivo_inexistente.txt': No such file or directory
+Erro: algoritmo de substituicao da TLB invalido 'invalido'. Use 'fifo' ou 'lru'.
+Erro: algoritmo de substituicao de pagina invalido 'invalido'. Use 'fifo' ou 'lru'.
+Number of Translated Addresses = 1000
+Page Faults = 538
+Page Fault Rate = 0.538
+TLB Hits = 54
+TLB Hit Rate = 0.054
+Number of Translated Addresses = 1000
+Page Faults = 538
+Page Fault Rate = 0.538
+TLB Hits = 55
+TLB Hit Rate = 0.055
+Number of Translated Addresses = 1000
+Page Faults = 539
+Page Fault Rate = 0.539
+TLB Hits = 54
+TLB Hit Rate = 0.054
+Virtual address: 16916 TLB: -1 Physical address: 20 Value: 0
+Virtual address: 62493 TLB: -1 Physical address: 285 Value: 0
+Virtual address: 30198 TLB: -1 Physical address: 758 Value: 29
+Virtual address: 53683 TLB: -1 Physical address: 947 Value: 108
+Virtual address: 40185 TLB: -1 Physical address: 1273 Value: 0
+Number of Translated Addresses = 1000
+Page Faults = 539
+Page Fault Rate = 0.539
+TLB Hits = 55
+TLB Hit Rate = 0.055
+1005 correct.txt
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	[31mmodified:   evidencias.log[m
+
+no changes added to commit (use "git add" and/or "git commit -a")
+[?1h=[33mc8cfaa7[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m loop de tradução 100% concluido[m
+[33m4e7034c[m correção do teste de tlb e validei a substituição[m
+[33m4cc1162[m finalizei o page fault e o tlb[m
+[33m3be0957[m tlb com busca hit miss e substituicao fifo e lru[m
+[33me5da7e4[m page fault com leitura do backing store e fifo e lru[m
+[33m460c7dc[m fiz a tabela de paginas e decodifiquei os endereços[m
+[33m4a46e06[m validei os argumentos e testei os erros de entrada[m
+[33m5d65fe2[m criei e testei o makefile[m
+[33m849adad[m criei os arquivos de evidencias.log e atualizei um pouco do gitignore[m
+[33mf0c5fa5[m Initial commit[m
+[K[?1l>
+Script done on 2026-11-24 12:06:21-03:00 [COMMAND_EXIT_CODE="0"]
