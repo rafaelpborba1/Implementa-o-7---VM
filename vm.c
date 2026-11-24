@@ -209,6 +209,17 @@ static int handle_page_fault(int page_number, FILE *backing_store, ReplacementAl
     return 1;
 }
 
+static void write_statistics(FILE *out_file, int total_addresses) {
+    double page_fault_rate = (double)page_faults / (double)total_addresses;
+    double tlb_hit_rate = (double)tlb_hits / (double)total_addresses;
+
+    fprintf(out_file, "Number of Translated Addresses = %d\n", total_addresses);
+    fprintf(out_file, "Page Faults = %d\n", page_faults);
+    fprintf(out_file, "Page Fault Rate = %.3f\n", page_fault_rate);
+    fprintf(out_file, "TLB Hits = %d\n", tlb_hits);
+    fprintf(out_file, "TLB Hit Rate = %.3f\n", tlb_hit_rate);
+}
+
 int main(int argc, char *argv[]) {
     if (argc != 4) {
         fprintf(stderr, "Uso: %s <arquivo_enderecos> <fifo|lru> <fifo|lru>\n", argv[0]);
@@ -331,14 +342,7 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    double page_fault_rate = (double)page_faults / (double)total_addresses;
-    double tlb_hit_rate = (double)tlb_hits / (double)total_addresses;
-
-    fprintf(out_file, "Number of Translated Addresses = %d\n", total_addresses);
-    fprintf(out_file, "Page Faults = %d\n", page_faults);
-    fprintf(out_file, "Page Fault Rate = %.3f\n", page_fault_rate);
-    fprintf(out_file, "TLB Hits = %d\n", tlb_hits);
-    fprintf(out_file, "TLB Hit Rate = %.3f\n", tlb_hit_rate);
+    write_statistics(out_file, total_addresses);
 
     fclose(out_file);
     fclose(backing_store);
